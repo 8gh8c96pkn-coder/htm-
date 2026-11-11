@@ -6,6 +6,18 @@
 <title>Движение вокруг нас — Марина | Фотограф · Мурманск</title>
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/8gh8c96pkn-coder/marina-site/main/IMG_3214.png">
 <style>
+    /* ПРЯЧЕМ ПЛАШКУ NETLIFY */
+    iframe[src*="netlify"], 
+    div[class*="netlify"], 
+    #netlify-badge, 
+    a[href*="netlify.com"],
+    [id^="netlify"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Georgia', 'Times New Roman', serif; background: #0a0a0a; color: #e8e8e8; line-height: 1.7; overflow-x: hidden; }
     body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.06) 0%, transparent 50%), radial-gradient(ellipse at 80% 90%, rgba(255,255,255,0.05) 0%, transparent 50%), linear-gradient(135deg, #0a0a0a 0%, #141414 25%, #0d0d0d 50%, #181818 75%, #0a0a0a 100%); z-index: -2; }
@@ -434,7 +446,6 @@ async function submitBooking(e) {
     const style = document.getElementById('bookStyle').value;
     const comment = document.getElementById('bookComment').value;
 
-    // ПРОВЕРКА ЗАНЯТОЙ ДАТЫ
     if (getBookedDates().includes(date)) {
         document.getElementById('submitStatus').textContent = '❌ Эта дата уже занята. Выберите другую.';
         document.getElementById('submitStatus').style.color = '#ff4444';
@@ -474,9 +485,5 @@ function shareSite() {
 renderReviews();
 renderCalendar();
 </script>
-
-<!-- Блок, который физически закрывает плашку Netlify -->
-<div style="position: fixed; bottom: 0; right: 0; width: 200px; height: 80px; background: #0a0a0a; z-index: 999999; pointer-events: none;"></div>
-
 </body>
 </html>

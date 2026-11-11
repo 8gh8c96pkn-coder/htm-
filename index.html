@@ -1,0 +1,596 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Движение вокруг нас — Марина | Фотограф · Мурманск</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/8gh8c96pkn-coder/marina-site/main/IMG_3214.png">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Georgia', 'Times New Roman', serif;
+        background: #0a0a0a;
+        color: #e8e8e8;
+        line-height: 1.7;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background:
+            radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.06) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 90%, rgba(255,255,255,0.05) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(200,200,200,0.03) 0%, transparent 70%),
+            linear-gradient(135deg, #0a0a0a 0%, #141414 25%, #0d0d0d 50%, #181818 75%, #0a0a0a 100%);
+        z-index: -2;
+    }
+
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-image:
+            repeating-linear-gradient(115deg, transparent, transparent 100px, rgba(255,255,255,0.012) 100px, rgba(255,255,255,0.012) 101px),
+            repeating-linear-gradient(65deg, transparent, transparent 150px, rgba(255,255,255,0.008) 150px, rgba(255,255,255,0.008) 151px);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 1s ease, transform 1s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* БЕГУЩАЯ СТРОКА */
+    .marquee-wrap {
+        background: #fff;
+        color: #000;
+        overflow: hidden;
+        white-space: nowrap;
+        padding: 0.5rem 0;
+        font-family: 'Arial', sans-serif;
+        font-size: 0.7rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 101;
+    }
+    .marquee-content {
+        display: inline-block;
+        animation: marquee 20s linear infinite;
+    }
+    @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+
+    header {
+        position: fixed;
+        top: 28px; left: 0; right: 0;
+        padding: 1rem 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(10,10,10,0.85);
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        z-index: 100;
+    }
+
+    .logo { display: flex; align-items: center; gap: 1rem; cursor: pointer; }
+    .logo img { height: 45px; width: auto; }
+    .logo-text {
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #fff;
+        font-size: 1rem;
+        line-height: 1.2;
+    }
+    .logo-text span { display: block; font-size: 0.5rem; letter-spacing: 0.4em; color: #888; margin-top: 3px; font-family: 'Arial', sans-serif; }
+
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    nav a {
+        color: #aaa; text-decoration: none; font-size: 0.7rem; letter-spacing: 0.15em;
+        text-transform: uppercase; font-family: 'Arial', sans-serif; transition: color 0.3s;
+        cursor: pointer; position: relative; padding-bottom: 4px;
+    }
+    nav a:hover, nav a.active { color: #fff; }
+
+    .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
+    .burger span { width: 25px; height: 1px; background: #fff; transition: 0.3s; }
+
+    .page {
+        display: none; min-height: 100vh; padding: 10rem 3rem 5rem;
+        max-width: 1300px; margin: 0 auto; animation: fadeIn 0.8s ease;
+    }
+    .page.active { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .hero { text-align: center; padding-top: 2vh; }
+    .hero-frame {
+        display: inline-block; padding: 2.5rem 3rem; border: 1px solid rgba(255,255,255,0.15);
+        position: relative; margin-bottom: 2rem;
+    }
+    .hero h1 { font-size: clamp(2rem, 5.5vw, 4rem); letter-spacing: 0.08em; text-transform: uppercase; color: #fff; line-height: 1.25; }
+    .hero .brand-en { font-size: 0.7rem; letter-spacing: 0.5em; color: #777; font-family: 'Arial', sans-serif; text-transform: uppercase; margin-top: 1rem; display: block; }
+    .hero .subtitle { font-size: 0.85rem; letter-spacing: 0.4em; text-transform: uppercase; color: #aaa; font-family: 'Arial', sans-serif; margin-top: 1rem; }
+
+    .btn {
+        display: inline-block; padding: 0.9rem 2.5rem; background: transparent; border: 1px solid rgba(255,255,255,0.5);
+        color: #fff; text-decoration: none; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+        font-family: 'Arial', sans-serif; cursor: pointer; transition: all 0.4s; position: relative; overflow: hidden;
+    }
+    .btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: #fff; transition: left 0.4s; z-index: -1; }
+    .btn:hover { color: #0a0a0a; }
+    .btn:hover::before { left: 0; }
+    .btn-filled { background: #fff; color: #0a0a0a; }
+    .btn-filled::before { background: #0a0a0a; }
+    .btn-filled:hover { color: #fff; }
+    .btn-sm { padding: 0.5rem 1.2rem; font-size: 0.6rem; }
+
+    .about-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: center; margin-top: 4rem; text-align: left; }
+    .about-photo img { width: 100%; border: 1px solid rgba(255,255,255,0.15); padding: 0.5rem; background: #111; }
+    .about-text h2 { font-size: 2.2rem; text-transform: uppercase; margin-bottom: 0.5rem; color: #fff; }
+    .accent { color: #888; font-size: 0.7rem; letter-spacing: 0.4em; text-transform: uppercase; font-family: 'Arial', sans-serif; margin-bottom: 1.5rem; display: block; }
+
+    .section-head { text-align: center; margin-bottom: 3rem; }
+    .section-head h2 { font-size: 2.2rem; letter-spacing: 0.15em; text-transform: uppercase; color: #fff; }
+    .section-head .line { width: 60px; height: 1px; background: #fff; margin: 1rem auto 0; }
+
+    /* ОТЗЫВЫ */
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .review-card { border: 1px solid rgba(255,255,255,0.12); padding: 2rem; background: rgba(255,255,255,0.02); position: relative; transition: 0.3s; }
+    .review-card:hover { border-color: rgba(255,255,255,0.3); }
+    .review-stars { color: #fff; font-size: 1rem; letter-spacing: 0.2em; margin-bottom: 1rem; }
+    .review-text { color: #ccc; font-style: italic; margin-bottom: 1.5rem; }
+    .review-author { font-family: 'Arial', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: #fff; }
+    .review-delete { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #666; font-size: 1.2rem; cursor: pointer; display: none; }
+    .review-delete:hover { color: #ff4444; }
+    body.edit-mode .review-delete { display: block; }
+
+    /* УСЛУГИ И БАННЕР */
+    .services-bg { position: relative; padding: 4rem 2rem; margin-bottom: 4rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
+    .services-bg img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.15; z-index: 1; }
+    .services-content { position: relative; z-index: 2; }
+    
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; position: relative; z-index: 2; }
+    .price-card { border: 1px solid rgba(255,255,255,0.15); padding: 2.5rem 2rem; text-align: center; background: rgba(10,10,10,0.85); backdrop-filter: blur(5px); display: flex; flex-direction: column; }
+    .price-card h3 { font-size: 1.4rem; text-transform: uppercase; color: #fff; margin-bottom: 0.3rem; }
+    .price-card .price { font-size: 2.5rem; color: #fff; margin-bottom: 1rem; }
+    .price-card .prepay { font-size: 0.8rem; color: #aaa; margin-bottom: 1rem; font-family: 'Arial', sans-serif; border-bottom: 1px solid #333; padding-bottom: 1rem; }
+    .price-card ul { list-style: none; text-align: left; margin-bottom: 1.5rem; flex-grow: 1; }
+    .price-card ul li { color: #bbb; font-size: 0.9rem; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .holiday-banner { text-align: center; background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.3); padding: 1rem; margin-bottom: 2rem; font-family: 'Arial', sans-serif; font-size: 0.8rem; letter-spacing: 0.1em; color: #fff; }
+
+    /* ФОРМА И КАРТА */
+    .booking-form { max-width: 760px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.12); padding: 2.5rem; background: rgba(255,255,255,0.02); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #888; margin-bottom: 0.4rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-family: 'Georgia', serif; font-size: 0.95rem; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .map-container { height: 300px; width: 100%; border: 1px solid rgba(255,255,255,0.15); margin-top: 2rem; filter: grayscale(100%) invert(90%); }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; padding: 1rem; }
+    .modal-overlay.active { display: flex; }
+    .modal-box { background: #111; border: 1px solid #333; padding: 2.5rem; max-width: 450px; width: 100%; position: relative; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #fff; color: #000; padding: 1rem 2rem; z-index: 3000; transition: 0.4s; font-family: 'Arial', sans-serif; font-size: 0.8rem; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 768px) {
+        header { padding: 0.8rem 1rem; top: 24px; }
+        .logo img { height: 35px; }
+        .logo-text { font-size: 0.8rem; }
+        .burger { display: flex; }
+        nav { position: fixed; top: 0; right: -100%; width: 75%; height: 100vh; background: rgba(10,10,10,0.98); flex-direction: column; justify-content: center; transition: 0.4s; }
+        nav.open { right: 0; }
+        .page { padding: 8rem 1.2rem 3rem; }
+        .about-grid { grid-template-columns: 1fr; }
+        .form-row { grid-template-columns: 1fr; }
+        .hero-frame { padding: 1.5rem; }
+    }
+</style>
+</head>
+<body>
+
+<!-- БЕГУЩАЯ СТРОКА -->
+<div class="marquee-wrap">
+    <div class="marquee-content">
+        <span>УЛИЧНАЯ СЪЕМКА • ПОРТРЕТЫ • МУРМАНСК • ЕСТЕСТВЕННЫЙ СВЕТ • ФОТОГРАФ МАРИНА • MOVEMENTAROUNDUS • ИСКРЕННИЕ ЭМОЦИИ • УЛИЧНАЯ СЪЕМКА • ПОРТРЕТЫ • МУРМАНСК • ЕСТЕСТВЕННЫЙ СВЕТ •</span>
+    </div>
+</div>
+
+<header>
+    <div class="logo" onclick="showPage('home')">
+        <img src="https://raw.githubusercontent.com/8gh8c96pkn-coder/marina-site/main/IMG_3214.png" alt="Логотип">
+        <div class="logo-text">Движение<span>вокруг нас</span></div>
+    </div>
+    <div class="burger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    <nav id="nav">
+        <a onclick="showPage('home')" data-page="home" class="active">Главная</a>
+        <a onclick="showPage('services')" data-page="services">Услуги</a>
+        <a onclick="showPage('booking')" data-page="booking">Бронь</a>
+        <a onclick="showPage('contacts')" data-page="contacts">Контакты</a>
+    </nav>
+</header>
+
+<!-- ГЛАВНАЯ -->
+<section class="page active" id="page-home">
+    <div class="hero">
+        <div class="hero-frame">
+            <h1>Движение<br>вокруг нас</h1>
+            <span class="brand-en">MovementAroundUs</span>
+            <div class="subtitle" style="margin-top:1.5rem;">Уличный фотограф · 17 лет · Мурманск</div>
+        </div>
+        <p class="lead">«Снимаю жизнь как она есть — свет, тень и настоящие эмоции»</p>
+        <button class="btn" onclick="showPage('services')">Записаться</button>
+
+        <div class="about-grid">
+            <div class="about-photo">
+                <img src="https://raw.githubusercontent.com/8gh8c96pkn-coder/marina-site/main/IMG_1399.jpeg" alt="Марина">
+            </div>
+            <div class="about-text">
+                <span class="accent">Обо мне</span>
+                <h2>Марина</h2>
+                <p>Привет! Мне 17 лет, и я начинающий уличный фотограф из Мурманска. Больше всего люблю снимать на улицах города — здесь живёт настоящая жизнь.</p>
+                <p>Я работаю в разных стилях: цветная съёмка, тёплые портреты, а при желании легко переведу кадры в чёрно-белую классику. В обработке я тоже пока учусь — но стараюсь снимать так, чтобы фотографии были красивыми ещё до обработки.</p>
+            </div>
+        </div>
+
+        <!-- БЛОК ОТЗЫВОВ -->
+        <div style="margin-top: 5rem;">
+            <div class="section-head">
+                <h2>Отзывы</h2>
+                <div class="line"></div>
+                <button class="btn btn-sm" onclick="openReviewModal()" style="margin-top: 1rem;">Оставить отзыв</button>
+                <button class="btn btn-sm" onclick="toggleEditMode()" id="editBtn" style="margin-top: 1rem;">✎ Режим удаления</button>
+            </div>
+            <div class="reviews-grid" id="reviewsGrid"></div>
+        </div>
+        
+        <!-- ПОДГОТОВКА -->
+        <div style="max-width:760px; margin:5rem auto 0; text-align:left;">
+            <div class="section-head"><h2>Как подготовиться</h2><div class="line"></div></div>
+            <ul style="list-style:none; color:#bbb; line-height:2;">
+                <li>👗 <b>Одежда:</b> Однотонные вещи без логотипов. Теплые оттенки или ч/б.</li>
+                <li>👟 <b>Обувь:</b> Удобная, будем много гулять.</li>
+                <li>💄 <b>Макияж:</b> Естественный, улица сама подчеркнет черты лица.</li>
+                <li>☕ <b>Настроение:</b> Возьмите любимый кофе и не переживайте!</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- УСЛУГИ -->
+<section class="page" id="page-services">
+    <div class="section-head">
+        <h2>Услуги и цены</h2>
+        <div class="line"></div>
+    </div>
+    
+    <div class="holiday-banner">
+        ✨ В честь праздничных дат действует скидка 10% на все тарифы! ✨
+    </div>
+
+    <div class="services-bg">
+        <img src="https://raw.githubusercontent.com/8gh8c96pkn-coder/marina-site/main/IMG_3215.png" alt="Фон">
+        <div class="services-content">
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <h3>«Мгновение»</h3>
+                    <div class="price">700 ₽</div>
+                    <div class="prepay">Бронь: всего 140 ₽ (20%)</div>
+                    <ul>
+                        <li>30 минут</li>
+                        <li>5 обработанных фото</li>
+                        <li>1 локация</li>
+                        <li>Срок 3 дня</li>
+                    </ul>
+                    <button class="btn btn-filled" onclick="selectTariff('«Мгновение» — 700 ₽ (Предоплата 140 ₽)')">Выбрать</button>
+                </div>
+
+                <div class="price-card">
+                    <h3>«Тихий свет»</h3>
+                    <div class="price">1300 ₽</div>
+                    <div class="prepay">Бронь: всего 260 ₽ (20%)</div>
+                    <ul>
+                        <li>1 час</li>
+                        <li>15 обработанных фото</li>
+                        <li>2 локации</li>
+                        <li>Срок 5 дней</li>
+                    </ul>
+                    <button class="btn btn-filled" onclick="selectTariff('«Тихий свет» — 1300 ₽ (Предоплата 260 ₽)')">Выбрать</button>
+                </div>
+
+                <div class="price-card">
+                    <h3>«Событие»</h3>
+                    <div class="price">1600 ₽/час</div>
+                    <div class="prepay">Бронь: 20% от итоговой суммы</div>
+                    <ul>
+                        <li>Репортаж</li>
+                        <li>Обработка всех фото</li>
+                        <li>Срок 5 дней</li>
+                        <li>Минимум 1 час</li>
+                    </ul>
+                    <button class="btn btn-filled" onclick="selectTariff('«Событие» — Репортаж (Бронь 20%)')">Выбрать</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-head" style="margin-top:4rem;">
+        <h2>Запись на фотосессию</h2>
+        <div class="line"></div>
+    </div>
+
+    <form class="booking-form" id="bookingForm" onsubmit="submitBooking(event)">
+        <div class="form-row">
+            <div class="form-group"><label>Ваше имя</label><input type="text" id="bookName" required></div>
+            <div class="form-group"><label>Телефон или Telegram</label><input type="text" id="bookContact" required></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Тариф</label>
+                <select id="bookTariff" required>
+                    <option value="">Выберите тариф</option>
+                    <option>«Мгновение» — 700 ₽ (Предоплата 140 ₽)</option>
+                    <option>«Тихий свет» — 1300 ₽ (Предоплата 260 ₽)</option>
+                    <option>«Событие» — Репортаж (Бронь 20%)</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Дата</label><input type="date" id="bookDate" required></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Время</label><input type="time" id="bookTime" required></div>
+            <div class="form-group">
+                <label>Локация</label>
+                <select id="bookLocation" required>
+                    <option value="">Выберите</option>
+                    <option>Парк (Семёновское озеро)</option>
+                    <option>Набережная</option>
+                    <option>Пять Углов</option>
+                    <option>Мурманский мост</option>
+                    <option>Другая (напишу в комментарии)</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group"><label>Стиль фото</label>
+            <select id="bookStyle"><option>Цветная</option><option>Ч/Б</option><option>На ваше усмотрение</option></select>
+        </div>
+        <div class="form-group"><label>Комментарий</label><textarea id="bookComment"></textarea></div>
+        <button type="submit" class="btn btn-filled" style="width:100%;" id="submitBtn">Отправить заявку</button>
+        <div id="submitStatus" style="text-align:center; margin-top:1rem; color:#fff;"></div>
+    </form>
+
+    <div class="section-head" style="margin-top:4rem;"><h2>Карта локаций</h2><div class="line"></div></div>
+    <div class="map-container">
+        <iframe src="https://yandex.ru/map-widget/v1/?ll=33.082704%2C68.970660&z=13" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+</section>
+
+<!-- БРОНЬ (Календарь) -->
+<section class="page" id="page-booking">
+    <div class="section-head"><h2>Занятые даты</h2><div class="line"></div></div>
+    <div style="max-width: 800px; margin: 0 auto; border: 1px solid #333; padding: 2rem;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+            <button onclick="changeMonth(-1)" style="background:none;border:1px solid #555;color:#fff;padding:5px 15px;cursor:pointer;">‹</button>
+            <h3 id="calTitle" style="color:#fff; text-transform:uppercase;"></h3>
+            <button onclick="changeMonth(1)" style="background:none;border:1px solid #555;color:#fff;padding:5px 15px;cursor:pointer;">›</button>
+        </div>
+        <div id="calGrid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:5px; text-align:center;"></div>
+        <div style="margin-top:1.5rem; display:flex; gap:1rem; justify-content:center; font-size:0.8rem; color:#aaa;">
+            <span>Свободно</span> <span style="color:#ff6666;">Забронировано</span>
+        </div>
+    </div>
+</section>
+
+<!-- КОНТАКТЫ -->
+<section class="page" id="page-contacts">
+    <div class="section-head"><h2>Контакты</h2><div class="line"></div></div>
+    <div style="text-align:center; color:#ccc; line-height:2;">
+        <p>📍 Мурманск</p>
+        <p>📱 <a href="tel:+79210331522" style="color:#fff;">+7 (921) 033-15-22</a></p>
+        <p>✈️ <a href="https://t.me/qwertyuuoqq" style="color:#fff;">@qwertyuuoqq</a></p>
+        <button class="btn btn-sm" onclick="shareSite()" style="margin-top:2rem;">Поделиться сайтом</button>
+        <p style="margin-top:2rem; font-size:0.8rem; color:#666;">© 2024 Марина · MovementAroundUs</p>
+    </div>
+</section>
+
+<!-- МОДАЛКА ОТЗЫВОВ -->
+<div class="modal-overlay" id="reviewModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('reviewModal')">×</button>
+        <h3 style="color:#fff; margin-bottom:1rem; text-align:center;">Оставить отзыв</h3>
+        <form onsubmit="submitReview(event)">
+            <div class="form-group" style="margin-bottom:1rem;"><label>Ваше имя</label><input type="text" id="revName" required></div>
+            <div class="form-group" style="margin-bottom:1rem;"><label>Оценка</label>
+                <select id="revStars"><option value="5">★★★★★ (5)</option><option value="4">★★★★☆ (4)</option><option value="3">★★★☆☆ (3)</option></select>
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;"><label>Текст отзыва</label><textarea id="revText" required></textarea></div>
+            <button type="submit" class="btn btn-filled" style="width:100%;">Отправить</button>
+        </form>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========== НАСТРОЙКИ БОТА ========== */
+const BOT_TOKEN = '9042285019:AAGNDM8NB3EAeHNJu3iXH6Mc3FwxLUd50yE';
+const CHAT_ID = '923540524';
+const PROXY_URL = 'https://marinafff.ydkth6f2rd.workers.dev/?url=';
+
+/* ========== НАВИГАЦИЯ ========== */
+function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.page === name));
+    document.getElementById('nav').classList.remove('open');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (name === 'booking') renderCalendar();
+}
+function toggleMenu() { document.getElementById('nav').classList.toggle('open'); }
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ========== ОТПРАВКА В TG ========== */
+async function sendToTelegram(text) {
+    const url = PROXY_URL + encodeURIComponent(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`);
+    await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'HTML' })
+    });
+}
+function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ========== ОТЗЫВЫ ========== */
+function getReviews() { return JSON.parse(localStorage.getItem('marina_reviews')) || []; }
+function saveReviews(arr) { localStorage.setItem('marina_reviews', JSON.stringify(arr)); }
+
+function renderReviews() {
+    const grid = document.getElementById('reviewsGrid');
+    const reviews = getReviews();
+    if (reviews.length === 0) {
+        grid.innerHTML = '<p style="color:#666; text-align:center; width:100%;">Пока нет отзывов. Будьте первыми!</p>';
+        return;
+    }
+    grid.innerHTML = reviews.map((r, i) => `
+        <div class="review-card">
+            <button class="review-delete" onclick="deleteReview(${i})">×</button>
+            <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
+            <div class="review-text">"${escapeHtml(r.text)}"</div>
+            <div class="review-author">${escapeHtml(r.name)}</div>
+        </div>
+    `).join('');
+}
+
+function openReviewModal() { openModal('reviewModal'); }
+
+async function submitReview(e) {
+    e.preventDefault();
+    const name = document.getElementById('revName').value;
+    const stars = document.getElementById('revStars').value;
+    const text = document.getElementById('revText').value;
+    
+    const reviews = getReviews();
+    reviews.push({ name, stars: parseInt(stars), text });
+    saveReviews(reviews);
+    renderReviews();
+    closeModal('reviewModal');
+    toast('Спасибо за отзыв!');
+    
+    sendToTelegram(`🌟 <b>Новый отзыв!</b>\nОт: ${escapeHtml(name)}\nОценка: ${stars}\nТекст: ${escapeHtml(text)}`);
+    document.getElementById('revName').value = ''; document.getElementById('revText').value = '';
+}
+
+function deleteReview(index) {
+    if(!confirm('Удалить отзыв?')) return;
+    const reviews = getReviews();
+    reviews.splice(index, 1);
+    saveReviews(reviews);
+    renderReviews();
+}
+function toggleEditMode() { document.body.classList.toggle('edit-mode'); toast('Режим редактирования переключен'); }
+
+/* ========== КАЛЕНДАРЬ ========== */
+function getBookedDates() { return JSON.parse(localStorage.getItem('marina_booked')) || []; }
+function saveBookedDates(arr) { localStorage.setItem('marina_booked', JSON.stringify(arr)); }
+
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function renderCalendar() {
+    const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    document.getElementById('calTitle').textContent = months[calMonth] + ' ' + calYear;
+    
+    const firstDay = new Date(calYear, calMonth, 1).getDay() || 7;
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const booked = getBookedDates();
+    
+    let html = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d => `<div style="color:#777; font-size:0.8rem;">${d}</div>`).join('');
+    for (let i = 1; i < firstDay; i++) html += `<div></div>`;
+    
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const isBooked = booked.includes(dateStr);
+        html += `<div style="padding:10px; border:1px solid ${isBooked ? '#ff4444' : '#333'}; color:${isBooked ? '#ff4444' : '#fff'}; text-decoration:${isBooked ? 'line-through' : 'none'};">${d}</div>`;
+    }
+    document.getElementById('calGrid').innerHTML = html;
+}
+function changeMonth(d) {
+    calMonth += d;
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    renderCalendar();
+}
+
+/* ========== БРОНЬ ========== */
+function selectTariff(t) {
+    showPage('services');
+    document.getElementById('bookTariff').value = t;
+    document.getElementById('bookingForm').scrollIntoView({behavior:'smooth'});
+}
+
+async function submitBooking(e) {
+    e.preventDefault();
+    const name = document.getElementById('bookName').value;
+    const contact = document.getElementById('bookContact').value;
+    const tariff = document.getElementById('bookTariff').value;
+    const date = document.getElementById('bookDate').value;
+    const time = document.getElementById('bookTime').value;
+    const location = document.getElementById('bookLocation').value;
+    const style = document.getElementById('bookStyle').value;
+    const comment = document.getElementById('bookComment').value;
+    
+    document.getElementById('submitStatus').textContent = 'Отправка...';
+
+    const text = `<b>📸 Новая заявка!</b>\n\n<b>Имя:</b> ${escapeHtml(name)}\n<b>Контакт:</b> ${escapeHtml(contact)}\n<b>Тариф:</b> ${escapeHtml(tariff)}\n<b>Дата:</b> ${escapeHtml(date)} в ${escapeHtml(time)}\n<b>Локация:</b> ${escapeHtml(location)}\n<b>Стиль:</b> ${escapeHtml(style)}\n<b>Комментарий:</b> ${escapeHtml(comment)}`;
+
+    try {
+        await sendToTelegram(text);
+        const booked = getBookedDates();
+        booked.push(date);
+        saveBookedDates(booked);
+        
+        document.getElementById('submitStatus').textContent = '✅ Заявка отправлена!';
+        document.getElementById('submitStatus').style.color = '#7cff7c';
+        document.getElementById('bookingForm').reset();
+        renderCalendar();
+    } catch (err) {
+        document.getElementById('submitStatus').textContent = '❌ Ошибка. Напишите в ТГ.';
+        document.getElementById('submitStatus').style.color = '#ff4444';
+    }
+}
+
+/* ========== ПОДЕЛИТЬСЯ ========== */
+function shareSite() {
+    if (navigator.share) {
+        navigator.share({ title: 'Движение вокруг нас', url: window.location.href });
+    } else {
+        navigator.clipboard.writeText(window.location.href);
+        toast('Ссылка скопирована!');
+    }
+}
+
+/* ИНИЦИАЛИЗАЦИЯ */
+renderReviews();
+renderCalendar();
+</script>
+</body>
+</html>

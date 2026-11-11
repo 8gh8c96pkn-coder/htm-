@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -8,128 +7,37 @@
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/8gh8c96pkn-coder/marina-site/main/IMG_3214.png">
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Georgia', 'Times New Roman', serif; background: #0a0a0a; color: #e8e8e8; line-height: 1.7; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.06) 0%, transparent 50%), radial-gradient(ellipse at 80% 90%, rgba(255,255,255,0.05) 0%, transparent 50%), linear-gradient(135deg, #0a0a0a 0%, #141414 25%, #0d0d0d 50%, #181818 75%, #0a0a0a 100%); z-index: -2; }
+    body::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: repeating-linear-gradient(115deg, transparent, transparent 100px, rgba(255,255,255,0.012) 100px, rgba(255,255,255,0.012) 101px); z-index: -1; pointer-events: none; }
+    
+    .marquee-wrap { background: #fff; color: #000; overflow: hidden; white-space: nowrap; padding: 0.5rem 0; font-family: 'Arial', sans-serif; font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; position: fixed; top: 0; left: 0; right: 0; z-index: 101; }
+    .marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-    body {
-        font-family: 'Georgia', 'Times New Roman', serif;
-        background: #0a0a0a;
-        color: #e8e8e8;
-        line-height: 1.7;
-        overflow-x: hidden;
-    }
-
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background:
-            radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.06) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 90%, rgba(255,255,255,0.05) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 50%, rgba(200,200,200,0.03) 0%, transparent 70%),
-            linear-gradient(135deg, #0a0a0a 0%, #141414 25%, #0d0d0d 50%, #181818 75%, #0a0a0a 100%);
-        z-index: -2;
-    }
-
-    body::after {
-        content: '';
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background-image:
-            repeating-linear-gradient(115deg, transparent, transparent 100px, rgba(255,255,255,0.012) 100px, rgba(255,255,255,0.012) 101px),
-            repeating-linear-gradient(65deg, transparent, transparent 150px, rgba(255,255,255,0.008) 150px, rgba(255,255,255,0.008) 151px);
-        z-index: -1;
-        pointer-events: none;
-    }
-
-    .reveal {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: opacity 1s ease, transform 1s ease;
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    /* БЕГУЩАЯ СТРОКА */
-    .marquee-wrap {
-        background: #fff;
-        color: #000;
-        overflow: hidden;
-        white-space: nowrap;
-        padding: 0.5rem 0;
-        font-family: 'Arial', sans-serif;
-        font-size: 0.7rem;
-        letter-spacing: 0.3em;
-        text-transform: uppercase;
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        z-index: 101;
-    }
-    .marquee-content {
-        display: inline-block;
-        animation: marquee 20s linear infinite;
-    }
-    @keyframes marquee {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
-    }
-
-    header {
-        position: fixed;
-        top: 28px; left: 0; right: 0;
-        padding: 1rem 3rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(10,10,10,0.85);
-        backdrop-filter: blur(15px);
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-        z-index: 100;
-    }
-
+    header { position: fixed; top: 28px; left: 0; right: 0; padding: 1rem 3rem; display: flex; justify-content: space-between; align-items: center; background: rgba(10,10,10,0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.08); z-index: 100; }
     .logo { display: flex; align-items: center; gap: 1rem; cursor: pointer; }
     .logo img { height: 45px; width: auto; }
-    .logo-text {
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: #fff;
-        font-size: 1rem;
-        line-height: 1.2;
-    }
+    .logo-text { letter-spacing: 0.2em; text-transform: uppercase; color: #fff; font-size: 1rem; line-height: 1.2; }
     .logo-text span { display: block; font-size: 0.5rem; letter-spacing: 0.4em; color: #888; margin-top: 3px; font-family: 'Arial', sans-serif; }
 
     nav { display: flex; gap: 1.5rem; align-items: center; }
-    nav a {
-        color: #aaa; text-decoration: none; font-size: 0.7rem; letter-spacing: 0.15em;
-        text-transform: uppercase; font-family: 'Arial', sans-serif; transition: color 0.3s;
-        cursor: pointer; position: relative; padding-bottom: 4px;
-    }
+    nav a { color: #aaa; text-decoration: none; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; font-family: 'Arial', sans-serif; transition: color 0.3s; cursor: pointer; position: relative; padding-bottom: 4px; }
     nav a:hover, nav a.active { color: #fff; }
-
     .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
     .burger span { width: 25px; height: 1px; background: #fff; transition: 0.3s; }
 
-    .page {
-        display: none; min-height: 100vh; padding: 10rem 3rem 5rem;
-        max-width: 1300px; margin: 0 auto; animation: fadeIn 0.8s ease;
-    }
+    .page { display: none; min-height: 100vh; padding: 10rem 3rem 5rem; max-width: 1300px; margin: 0 auto; animation: fadeIn 0.8s ease; }
     .page.active { display: block; }
-
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
     .hero { text-align: center; padding-top: 2vh; }
-    .hero-frame {
-        display: inline-block; padding: 2.5rem 3rem; border: 1px solid rgba(255,255,255,0.15);
-        position: relative; margin-bottom: 2rem;
-    }
+    .hero-frame { display: inline-block; padding: 2.5rem 3rem; border: 1px solid rgba(255,255,255,0.15); position: relative; margin-bottom: 2rem; }
     .hero h1 { font-size: clamp(2rem, 5.5vw, 4rem); letter-spacing: 0.08em; text-transform: uppercase; color: #fff; line-height: 1.25; }
     .hero .brand-en { font-size: 0.7rem; letter-spacing: 0.5em; color: #777; font-family: 'Arial', sans-serif; text-transform: uppercase; margin-top: 1rem; display: block; }
     .hero .subtitle { font-size: 0.85rem; letter-spacing: 0.4em; text-transform: uppercase; color: #aaa; font-family: 'Arial', sans-serif; margin-top: 1rem; }
 
-    .btn {
-        display: inline-block; padding: 0.9rem 2.5rem; background: transparent; border: 1px solid rgba(255,255,255,0.5);
-        color: #fff; text-decoration: none; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
-        font-family: 'Arial', sans-serif; cursor: pointer; transition: all 0.4s; position: relative; overflow: hidden;
-    }
+    .btn { display: inline-block; padding: 0.9rem 2.5rem; background: transparent; border: 1px solid rgba(255,255,255,0.5); color: #fff; text-decoration: none; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; font-family: 'Arial', sans-serif; cursor: pointer; transition: all 0.4s; position: relative; overflow: hidden; }
     .btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: #fff; transition: left 0.4s; z-index: -1; }
     .btn:hover { color: #0a0a0a; }
     .btn:hover::before { left: 0; }
@@ -147,7 +55,6 @@
     .section-head h2 { font-size: 2.2rem; letter-spacing: 0.15em; text-transform: uppercase; color: #fff; }
     .section-head .line { width: 60px; height: 1px; background: #fff; margin: 1rem auto 0; }
 
-    /* ОТЗЫВЫ */
     .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
     .review-card { border: 1px solid rgba(255,255,255,0.12); padding: 2rem; background: rgba(255,255,255,0.02); position: relative; transition: 0.3s; }
     .review-card:hover { border-color: rgba(255,255,255,0.3); }
@@ -158,7 +65,6 @@
     .review-delete:hover { color: #ff4444; }
     body.edit-mode .review-delete { display: block; }
 
-    /* УСЛУГИ И БАННЕР */
     .services-bg { position: relative; padding: 4rem 2rem; margin-bottom: 4rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
     .services-bg img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.15; z-index: 1; }
     .services-content { position: relative; z-index: 2; }
@@ -172,7 +78,6 @@
     .price-card ul li { color: #bbb; font-size: 0.9rem; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .holiday-banner { text-align: center; background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.3); padding: 1rem; margin-bottom: 2rem; font-family: 'Arial', sans-serif; font-size: 0.8rem; letter-spacing: 0.1em; color: #fff; }
 
-    /* ФОРМА И КАРТА */
     .booking-form { max-width: 760px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.12); padding: 2.5rem; background: rgba(255,255,255,0.02); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
     .form-group label { display: block; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #888; margin-bottom: 0.4rem; }
@@ -203,7 +108,6 @@
 </head>
 <body>
 
-<!-- БЕГУЩАЯ СТРОКА -->
 <div class="marquee-wrap">
     <div class="marquee-content">
         <span>УЛИЧНАЯ СЪЕМКА • ПОРТРЕТЫ • МУРМАНСК • ЕСТЕСТВЕННЫЙ СВЕТ • ФОТОГРАФ МАРИНА • MOVEMENTAROUNDUS • ИСКРЕННИЕ ЭМОЦИИ • УЛИЧНАЯ СЪЕМКА • ПОРТРЕТЫ • МУРМАНСК • ЕСТЕСТВЕННЫЙ СВЕТ •</span>
@@ -224,7 +128,6 @@
     </nav>
 </header>
 
-<!-- ГЛАВНАЯ -->
 <section class="page active" id="page-home">
     <div class="hero">
         <div class="hero-frame">
@@ -247,7 +150,6 @@
             </div>
         </div>
 
-        <!-- БЛОК ОТЗЫВОВ -->
         <div style="margin-top: 5rem;">
             <div class="section-head">
                 <h2>Отзывы</h2>
@@ -258,7 +160,6 @@
             <div class="reviews-grid" id="reviewsGrid"></div>
         </div>
         
-        <!-- ПОДГОТОВКА -->
         <div style="max-width:760px; margin:5rem auto 0; text-align:left;">
             <div class="section-head"><h2>Как подготовиться</h2><div class="line"></div></div>
             <ul style="list-style:none; color:#bbb; line-height:2;">
@@ -271,7 +172,6 @@
     </div>
 </section>
 
-<!-- УСЛУГИ -->
 <section class="page" id="page-services">
     <div class="section-head">
         <h2>Услуги и цены</h2>
@@ -378,7 +278,6 @@
     </div>
 </section>
 
-<!-- БРОНЬ (Календарь) -->
 <section class="page" id="page-booking">
     <div class="section-head"><h2>Занятые даты</h2><div class="line"></div></div>
     <div style="max-width: 800px; margin: 0 auto; border: 1px solid #333; padding: 2rem;">
@@ -394,7 +293,6 @@
     </div>
 </section>
 
-<!-- КОНТАКТЫ -->
 <section class="page" id="page-contacts">
     <div class="section-head"><h2>Контакты</h2><div class="line"></div></div>
     <div style="text-align:center; color:#ccc; line-height:2;">
@@ -406,7 +304,6 @@
     </div>
 </section>
 
-<!-- МОДАЛКА ОТЗЫВОВ -->
 <div class="modal-overlay" id="reviewModal">
     <div class="modal-box">
         <button class="modal-close" onclick="closeModal('reviewModal')">×</button>
@@ -425,12 +322,10 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ========== НАСТРОЙКИ БОТА ========== */
 const BOT_TOKEN = '9042285019:AAGNDM8NB3EAeHNJu3iXH6Mc3FwxLUd50yE';
 const CHAT_ID = '923540524';
 const PROXY_URL = 'https://marinafff.ydkth6f2rd.workers.dev/?url=';
 
-/* ========== НАВИГАЦИЯ ========== */
 function showPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + name).classList.add('active');
@@ -448,7 +343,6 @@ function toast(msg) {
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-/* ========== ОТПРАВКА В TG ========== */
 async function sendToTelegram(text) {
     const url = PROXY_URL + encodeURIComponent(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`);
     await fetch(url, {
@@ -459,7 +353,6 @@ async function sendToTelegram(text) {
 }
 function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-/* ========== ОТЗЫВЫ ========== */
 function getReviews() { return JSON.parse(localStorage.getItem('marina_reviews')) || []; }
 function saveReviews(arr) { localStorage.setItem('marina_reviews', JSON.stringify(arr)); }
 
@@ -508,7 +401,6 @@ function deleteReview(index) {
 }
 function toggleEditMode() { document.body.classList.toggle('edit-mode'); toast('Режим редактирования переключен'); }
 
-/* ========== КАЛЕНДАРЬ ========== */
 function getBookedDates() { return JSON.parse(localStorage.getItem('marina_booked')) || []; }
 function saveBookedDates(arr) { localStorage.setItem('marina_booked', JSON.stringify(arr)); }
 
@@ -540,7 +432,6 @@ function changeMonth(d) {
     renderCalendar();
 }
 
-/* ========== БРОНЬ ========== */
 function selectTariff(t) {
     showPage('services');
     document.getElementById('bookTariff').value = t;
@@ -578,7 +469,6 @@ async function submitBooking(e) {
     }
 }
 
-/* ========== ПОДЕЛИТЬСЯ ========== */
 function shareSite() {
     if (navigator.share) {
         navigator.share({ title: 'Движение вокруг нас', url: window.location.href });
@@ -588,7 +478,6 @@ function shareSite() {
     }
 }
 
-/* ИНИЦИАЛИЗАЦИЯ */
 renderReviews();
 renderCalendar();
 </script>

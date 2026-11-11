@@ -5,17 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Движение вокруг нас — Марина | Фотограф · Мурманск</title>
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/8gh8c96pkn-coder/marina-site/main/IMG_3214.png">
-   <style>
-    #netlify-badge, .netlify-badge, iframe[title="Netlify"] {
-        display: none !important;
-    }
-</style>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Georgia', 'Times New Roman', serif; background: #0a0a0a; color: #e8e8e8; line-height: 1.7; overflow-x: hidden; }
     body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.06) 0%, transparent 50%), radial-gradient(ellipse at 80% 90%, rgba(255,255,255,0.05) 0%, transparent 50%), linear-gradient(135deg, #0a0a0a 0%, #141414 25%, #0d0d0d 50%, #181818 75%, #0a0a0a 100%); z-index: -2; }
     body::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: repeating-linear-gradient(115deg, transparent, transparent 100px, rgba(255,255,255,0.012) 100px, rgba(255,255,255,0.012) 101px); z-index: -1; pointer-events: none; }
     
+    /* Скрываем плашку Netlify */
+    #netlify-badge, .netlify-badge, iframe[title="Netlify"] { display: none !important; opacity: 0 !important; visibility: hidden !important; }
+
     .marquee-wrap { background: #fff; color: #000; overflow: hidden; white-space: nowrap; padding: 0.5rem 0; font-family: 'Arial', sans-serif; font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; position: fixed; top: 0; left: 0; right: 0; z-index: 101; }
     .marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
     @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -66,9 +64,6 @@
     .review-stars { color: #fff; font-size: 1rem; letter-spacing: 0.2em; margin-bottom: 1rem; }
     .review-text { color: #ccc; font-style: italic; margin-bottom: 1.5rem; }
     .review-author { font-family: 'Arial', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: #fff; }
-    .review-delete { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #666; font-size: 1.2rem; cursor: pointer; display: none; }
-    .review-delete:hover { color: #ff4444; }
-    body.edit-mode .review-delete { display: block; }
 
     .services-bg { position: relative; padding: 4rem 2rem; margin-bottom: 4rem; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
     .services-bg img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.15; z-index: 1; }
@@ -160,7 +155,6 @@
                 <h2>Отзывы</h2>
                 <div class="line"></div>
                 <button class="btn btn-sm" onclick="openReviewModal()" style="margin-top: 1rem;">Оставить отзыв</button>
-                <button class="btn btn-sm" onclick="toggleEditMode()" id="editBtn" style="margin-top: 1rem;">✎ Режим удаления</button>
             </div>
             <div class="reviews-grid" id="reviewsGrid"></div>
         </div>
@@ -262,9 +256,8 @@
                 <select id="bookLocation" required>
                     <option value="">Выберите</option>
                     <option>Парк (Семёновское озеро)</option>
-                    <option>Набережная</option>
+                    <option>Парк возле Пяти Углов</option>
                     <option>Пять Углов</option>
-                    <option>Мурманский мост</option>
                     <option>Другая (напишу в комментарии)</option>
                 </select>
             </div>
@@ -331,6 +324,14 @@ const BOT_TOKEN = '9042285019:AAGNDM8NB3EAeHNJu3iXH6Mc3FwxLUd50yE';
 const CHAT_ID = '923540524';
 const PROXY_URL = 'https://marinafff.ydkth6f2rd.workers.dev/?url=';
 
+// Скрытие плашки Netlify на всякий случай скриптом
+document.addEventListener("DOMContentLoaded", function() {
+    setInterval(() => {
+        const badge = document.getElementById('netlify-badge') || document.querySelector('.netlify-badge') || document.querySelector('iframe[title="Netlify"]');
+        if (badge) badge.remove();
+    }, 1000);
+});
+
 function showPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + name).classList.add('active');
@@ -370,7 +371,6 @@ function renderReviews() {
     }
     grid.innerHTML = reviews.map((r, i) => `
         <div class="review-card">
-            <button class="review-delete" onclick="deleteReview(${i})">×</button>
             <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
             <div class="review-text">"${escapeHtml(r.text)}"</div>
             <div class="review-author">${escapeHtml(r.name)}</div>
@@ -396,15 +396,6 @@ async function submitReview(e) {
     sendToTelegram(`🌟 <b>Новый отзыв!</b>\nОт: ${escapeHtml(name)}\nОценка: ${stars}\nТекст: ${escapeHtml(text)}`);
     document.getElementById('revName').value = ''; document.getElementById('revText').value = '';
 }
-
-function deleteReview(index) {
-    if(!confirm('Удалить отзыв?')) return;
-    const reviews = getReviews();
-    reviews.splice(index, 1);
-    saveReviews(reviews);
-    renderReviews();
-}
-function toggleEditMode() { document.body.classList.toggle('edit-mode'); toast('Режим редактирования переключен'); }
 
 function getBookedDates() { return JSON.parse(localStorage.getItem('marina_booked')) || []; }
 function saveBookedDates(arr) { localStorage.setItem('marina_booked', JSON.stringify(arr)); }
@@ -453,8 +444,16 @@ async function submitBooking(e) {
     const location = document.getElementById('bookLocation').value;
     const style = document.getElementById('bookStyle').value;
     const comment = document.getElementById('bookComment').value;
+
+    // ПРОВЕРКА ЗАНЯТОЙ ДАТЫ
+    if (getBookedDates().includes(date)) {
+        document.getElementById('submitStatus').textContent = '❌ Эта дата уже занята. Выберите другую.';
+        document.getElementById('submitStatus').style.color = '#ff4444';
+        return;
+    }
     
     document.getElementById('submitStatus').textContent = 'Отправка...';
+    document.getElementById('submitStatus').style.color = '#fff';
 
     const text = `<b>📸 Новая заявка!</b>\n\n<b>Имя:</b> ${escapeHtml(name)}\n<b>Контакт:</b> ${escapeHtml(contact)}\n<b>Тариф:</b> ${escapeHtml(tariff)}\n<b>Дата:</b> ${escapeHtml(date)} в ${escapeHtml(time)}\n<b>Локация:</b> ${escapeHtml(location)}\n<b>Стиль:</b> ${escapeHtml(style)}\n<b>Комментарий:</b> ${escapeHtml(comment)}`;
 
